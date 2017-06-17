@@ -684,3 +684,19 @@ function filter() {
         }
     }
 }
+
+// Weather API
+function loadData() {
+    var weatherAPIXU = "http://api.apixu.com/v1/current.json?key=453477e8eec14cbc805210143171706&q=Toronto";
+
+    $.getJSON(weatherAPIXU, function(data) {
+        var list = $(".place ul");
+        forecast = data.location.current;
+        $list.append('<li>Temp: ' + forecast.temp_c + '°C</li>');
+    }).error(function(e) {
+        $(".place").append('<p style="text-align: center;">Sorry! Weather Underground</p><p style="text-align: center;">Could Not Be Loaded</p>');
+    });
+
+};
+
+$('.place').submit(loadData);

@@ -8,6 +8,7 @@
         <title>Neighborhood Map</title>
         <link rel=stylesheet type=text/css href="static/styles.css">
         <link rel=stylesheet type=text/css href="static/bootstrap.css">
+        <script src="js/lib/knockout-3.4.2.js"></script>
     </head>
 
     <body>
@@ -69,12 +70,17 @@
                         </li>
                     </ul>
                 </div>
+                <div class="place">
+                    <h3>Toronto Weather Forecast</h3>
+                    <ul style="margin: 0">
+                    </ul>
+                </div>
             </div>
             <div id="map"></div>
         </div>
-        <script src="js/lib/knockout-3.4.2.js"></script>
+        <script src="js/lib/jquery.min.js"></script>
         <script src="js/app.js"></script>
-        <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,drawing,geometrykey=AIzaSyAb9LEafeIzz06ayPvMDzguMYP4g0fBkIk&v=3&callback=initMap">
+        <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,drawing,geometry&key=AIzaSyAb9LEafeIzz06ayPvMDzguMYP4g0fBkIk&v=3&callback=initMap">
         </script>
 
     </body>
