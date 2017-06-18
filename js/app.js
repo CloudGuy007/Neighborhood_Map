@@ -167,11 +167,6 @@ function initMap() {
         function() {
             zoomToArea();
         });
-    document.getElementById('zoomTo').addEventListener(
-        'click',
-        function() {
-            zoomToPlace();
-        });
     document.getElementById('search-within-time').addEventListener(
         'click',
         function() {
@@ -621,49 +616,81 @@ function myFunction() {
 // These are the real estate listings that will be shown to the user.
 var locations = [{
         title: 'Kavkaz Restaurant',
+        address: '1881 Steeles Ave W, North York, ON M3H 5Y4',
+        location: {
+            lat: 43.78825,
+            lng: -79.467264
+        }
     },
     {
         title: 'A Yiddishe Mame Restaurant',
+        address: '1416 Centre St, Thornhill, ON L4J 8A1',
+        location: {
+            lat: 43.808537,
+            lng: -79.470641
+        }
     },
     {
         title: 'Babushka Club',
+        address: '9141 Keele St, Concord, ON L4K 5B4',
+        location: {
+            lat: 43.836554,
+            lng: -79.50581
+        }
     },
     {
         title: 'Mint Lounge & Karaoke',
+        address: '6267 Yonge St, North York, ON M2M 3X6',
+        location: {
+            lat: 43.796283,
+            lng: -79.417449
+        }
     },
     {
         title: 'Mezza Notte',
+        address: '11 Disera Dr, Thornhill, ON L4J 0A7',
+        location: {
+            lat: 43.811911,
+            lng: -79.452171
+        }
     },
     {
         title: 'Bagel World',
+        address: '10 Disera Dr, Thornhill, ON L4J 0A7',
+        location: {
+            lat: 43.812108,
+            lng: -79.452992
+        }
     }
 ];
 
-function zoomToPlace() {
-    // Initialize the geocoder.
-    var geocoder = new google.maps.Geocoder();
-    // Get the place.
-    var address = document.getElementById('zoomTo').value;
-    // Geocode the address/area entered to get the center. Then, center the map on it and zoom in
-    geocoder.geocode({
-        address: address,
-        componentRestrictions: {
-            locality: 'North York'
-        }
-    }, function(results, status) {
-        map.setCenter(results[0].geometry.location);
-        map.setZoom(15);
-    });
-}
+
 
 // List of Places
 function PlacesList() {
     var self = this;
     self.places = ko.observableArray(locations);
+    self.address = ko.observable();
+    self.zoomToPlace = function() {
+        // Initialize the geocoder.
+        var geocoder = new google.maps.Geocoder();
+        // Get the place.
+        var address = this.address;
+        // Geocode the address/area entered to get the center. Then, center the map on it and zoom in
+        geocoder.geocode({
+            address: address,
+            componentRestrictions: {
+                locality: 'North York'
+            }
+        }, function(results, status) {
+            map.setCenter(results[0].geometry.location);
+            map.setZoom(15);
+        });
+    }
 }
 
-ko.applyBindings(new PlacesList());
-ko.applyBindings(new zoomToPlace());
+ko.applyBindings(new PlacesList(), document.getElementById("myUL"));
+
 
 // Filtering function
 function filter() {
