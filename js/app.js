@@ -152,6 +152,8 @@ function initMap() {
     }
     document.getElementById('show-listings').addEventListener(
         'click', showListings);
+    document.getElementById('zoomTo').addEventListener(
+        'click', showListings);
     document.getElementById('hide-listings').addEventListener(
         'click',
         function() {
@@ -671,6 +673,7 @@ function PlacesList() {
     var self = this;
     self.places = ko.observableArray(locations);
     self.address = ko.observable();
+    self.title = ko.observable();
     self.zoomToPlace = function() {
         // Initialize the geocoder.
         var geocoder = new google.maps.Geocoder();
@@ -679,13 +682,23 @@ function PlacesList() {
         // Geocode the address/area entered to get the center. Then, center the map on it and zoom in
         geocoder.geocode({
             address: address,
-            componentRestrictions: {
-                locality: 'North York'
-            }
         }, function(results, status) {
             map.setCenter(results[0].geometry.location);
             map.setZoom(15);
         });
+    }
+}
+
+function PlacesMarker() {
+    var self = this;
+    self.location = ko.observable();
+    self.createMarker = function() {
+        var marker = new google.maps.Marker({
+            position: this.location,
+            map: map,
+            title: 'Hello World!'
+        });
+
     }
 }
 

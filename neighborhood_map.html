@@ -63,8 +63,8 @@
                 <div class="scroll" id="myUL">
                     <ul data-bind="foreach: places">
                         <li>
-                            <input data-bind="value: title, click: $parent.zoomToPlace, text: address" type="button"
-                                class="btn btn-small btn-link" id="zoomTo">
+                            <input data-bind="value: title, click: $parent.zoomToPlace, text: address + location"
+                                type="button" class="btn btn-small btn-link" id="zoomTo">
                         </li>
                     </ul>
                 </div>
