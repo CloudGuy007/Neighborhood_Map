@@ -678,7 +678,7 @@ var locations = [{
     }
 ];
 
-// List of Places
+// List of Places - provides list view of places and on click zooms map and shows the market
 function PlacesList() {
     var self = this;
     self.places = ko.observableArray(locations);
@@ -701,21 +701,22 @@ function PlacesList() {
 
 ko.applyBindings(new PlacesList(), document.getElementById("myUL"));
 
-// Weather API
+// Weather API provided by https://www.apixu.com
 $(document).ready(function loadData() {
     var weatherAPIXU = "http://api.apixu.com/v1/current.json?key=453477e8eec14cbc805210143171706&q=Toronto";
-
     $.getJSON(weatherAPIXU, function(data) {
         var forecast = data.current.temp_c;
         var weather = $(".weather");
         weather.append(forecast + '° C');
+    }).error(function(e) {
+        $(".weather").append('Sorry! Not Loaded');
     });
     $('.weather').submit(loadData);
 });
 
 
 
-// Filtering function
+// Filtering function to search through list of places
 function filter() {
     // Declare variables
     var input, filter, ul, li, a, i;
@@ -723,7 +724,6 @@ function filter() {
     filter = input.value.toUpperCase();
     ul = document.getElementById("myUL");
     li = ul.getElementsByTagName('li');
-
     // Loop through all list items, and hide those who don't match the search query
     for (i = 0; i < li.length; i++) {
         a = li[i].getElementsByTagName("a")[0];
