@@ -34,7 +34,7 @@ function initMap() {
         stylers: [{
             visibility: 'off'
         }]
-    }]
+    }];
 
     map = new google.maps.Map(document.getElementById('map'), {
         center: {
@@ -320,7 +320,7 @@ function zoomToArea() {
     // Get the address or place that the user entered.
     var address = document.getElementById('zoom-to-area-text').value;
     // Make sure the address isn't blank.
-    if (address == '') {
+    if (address === '') {
         window.alert('You must enter an area, or address.');
     } else {
         // Geocode the address/area entered to get the center. Then, center the map on it and zoom in
@@ -346,11 +346,11 @@ function zoomToArea() {
 // that are within that travel time (via that travel mode) of the location
 function searchWithinTime() {
     // Initialize the distance matrix service.
-    var distanceMatrixService = new google.maps.DistanceMatrixService;
+    var distanceMatrixService = new google.maps.DistanceMatrixService();
     var address = document.getElementById('search-within-time-text')
         .value;
     // Check to make sure the place entered isn't blank.
-    if (address == '') {
+    if (address === '') {
         window.alert('You must enter an address.');
     } else {
         hideMarkers(markers);
@@ -441,7 +441,7 @@ function displayMarkersWithinTime(response) {
 // on the map.
 function displayDirections(origin) {
     hideMarkers(markers);
-    var directionsService = new google.maps.DirectionsService;
+    var directionsService = new google.maps.DirectionsService();
     // Get the destination address from the user entered value.
     var destinationAddress =
         document.getElementById('search-within-time-text').value;
@@ -475,7 +475,7 @@ function displayDirections(origin) {
 function searchBoxPlaces(searchBox) {
     hideMarkers(placeMarkers);
     var places = searchBox.getPlaces();
-    if (places.length == 0) {
+    if (places.length === 0) {
         window.alert(
             'We did not find any places matching that search!');
     } else {
@@ -696,7 +696,7 @@ function PlacesList() {
             map.setCenter(results[0].geometry.location);
             map.setZoom(15);
         });
-    }
+    };
 }
 
 ko.applyBindings(new PlacesList(), document.getElementById("myUL"));
