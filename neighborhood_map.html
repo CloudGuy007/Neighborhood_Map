@@ -63,16 +63,15 @@
                 <div class="scroll" id="myUL">
                     <ul data-bind="foreach: places">
                         <li>
-                            <input data-bind="value: title, click: $parent.zoomToPlace, text: address + location"
+                            <a href='#'>
+                            <input data-bind="value: title, click: $parent.zoomToPlace, text: address"
                                 type="button" class="btn btn-small btn-link" id="zoomTo">
+                            <span data-bind="text: temp" class="weather"></span>
+                            </a>
                         </li>
                     </ul>
                 </div>
-                <div class="place">
-                    <h3>Toronto Weather Forecast</h3>
-                    <ul style="margin: 0">
-                    </ul>
-                </div>
+
             </div>
             <div id="map"></div>
         </div>

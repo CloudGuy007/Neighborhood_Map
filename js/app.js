@@ -619,6 +619,8 @@ function myFunction() {
 var locations = [{
         title: 'Kavkaz Restaurant',
         address: '1881 Steeles Ave W, North York, ON M3H 5Y4',
+        city: 'North York',
+        temp: '',
         location: {
             lat: 43.78825,
             lng: -79.467264
@@ -627,6 +629,8 @@ var locations = [{
     {
         title: 'A Yiddishe Mame Restaurant',
         address: '1416 Centre St, Thornhill, ON L4J 8A1',
+        city: 'Thornhill',
+        temp: '',
         location: {
             lat: 43.808537,
             lng: -79.470641
@@ -635,6 +639,8 @@ var locations = [{
     {
         title: 'Babushka Club',
         address: '9141 Keele St, Concord, ON L4K 5B4',
+        city: 'Concord',
+        temp: '',
         location: {
             lat: 43.836554,
             lng: -79.50581
@@ -643,6 +649,8 @@ var locations = [{
     {
         title: 'Mint Lounge & Karaoke',
         address: '6267 Yonge St, North York, ON M2M 3X6',
+        city: 'North York',
+        temp: '',
         location: {
             lat: 43.796283,
             lng: -79.417449
@@ -651,6 +659,8 @@ var locations = [{
     {
         title: 'Mezza Notte',
         address: '11 Disera Dr, Thornhill, ON L4J 0A7',
+        city: 'Thornhill',
+        temp: '',
         location: {
             lat: 43.811911,
             lng: -79.452171
@@ -659,14 +669,14 @@ var locations = [{
     {
         title: 'Bagel World',
         address: '10 Disera Dr, Thornhill, ON L4J 0A7',
+        city: 'Thornhill',
+        temp: '',
         location: {
             lat: 43.812108,
             lng: -79.452992
         }
     }
 ];
-
-
 
 // List of Places
 function PlacesList() {
@@ -689,20 +699,20 @@ function PlacesList() {
     }
 }
 
-function PlacesMarker() {
-    var self = this;
-    self.location = ko.observable();
-    self.createMarker = function() {
-        var marker = new google.maps.Marker({
-            position: this.location,
-            map: map,
-            title: 'Hello World!'
-        });
-
-    }
-}
-
 ko.applyBindings(new PlacesList(), document.getElementById("myUL"));
+
+// Weather API
+$(document).ready(function loadData() {
+    var weatherAPIXU = "http://api.apixu.com/v1/current.json?key=453477e8eec14cbc805210143171706&q=Toronto";
+
+    $.getJSON(weatherAPIXU, function(data) {
+        var forecast = data.current.temp_c;
+        var weather = $(".weather");
+        weather.append(forecast + '° C');
+    });
+    $('.weather').submit(loadData);
+});
+
 
 
 // Filtering function
@@ -724,19 +734,3 @@ function filter() {
         }
     }
 }
-
-// Weather API
-function loadData() {
-    var weatherAPIXU = "http://api.apixu.com/v1/current.json?key=453477e8eec14cbc805210143171706&q=Toronto";
-
-    $.getJSON(weatherAPIXU, function(data) {
-        var list = $(".place ul");
-        forecast = data.location.current;
-        $list.append('<li>Temp: ' + forecast.temp_c + '°C</li>');
-    }).error(function(e) {
-        $(".place").append('<p style="text-align: center;">Sorry! Weather Underground</p><p style="text-align: center;">Could Not Be Loaded</p>');
-    });
-
-};
-
-$('.place').submit(loadData);
