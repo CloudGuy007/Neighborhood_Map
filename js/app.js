@@ -123,10 +123,10 @@ function initMap() {
     // mouses over the marker.
     var highlightedIcon = makeMarkerIcon('FFFF24');
     // The following group uses the location array to create an array of markers on initialize.
-    for (var i = 0; i < locations.length; i++) {
+    locations.forEach(function(location, i) {
         // Get the position from the location array.
-        var position = locations[i].location;
-        var title = locations[i].title;
+        var position = location.location;
+        var title = location.title;
         // Create a marker per location, and put into markers array.
         var marker = new google.maps.Marker({
             position: position,
@@ -149,7 +149,7 @@ function initMap() {
         marker.addListener('mouseout', function() {
             this.setIcon(defaultIcon);
         });
-    }
+    });
     document.getElementById('show-listings').addEventListener(
         'click', showListings);
     document.getElementById('zoomTo').addEventListener(
@@ -225,7 +225,7 @@ function populateInfoWindow(marker, infowindow) {
         // In case the status is OK, which means the pano was found, compute the
         // position of the streetview image, then calculate the heading, then get a
         // panorama from that and set the options
-        function getStreetView(data, status) {
+        var getStreetView = function(data, status) {
             if (status == google.maps.StreetViewStatus.OK) {
                 var nearStreetViewLocation = data.location.latLng;
                 var heading = google.maps.geometry.spherical.computeHeading(
@@ -247,7 +247,7 @@ function populateInfoWindow(marker, infowindow) {
                     '</div>' +
                     '<div>No Street View Found</div>');
             }
-        }
+        };
         // Use streetview service to get the closest streetview image within
         // 50 meters of the markers position
         streetViewService.getPanoramaByLocation(marker.position,
@@ -502,8 +502,7 @@ function textSearchPlaces() {
 // This function creates markers for each place found in either places search.
 function createMarkersForPlaces(places) {
     var bounds = new google.maps.LatLngBounds();
-    for (var i = 0; i < places.length; i++) {
-        var place = places[i];
+    places.forEach(function(place, i) {
         var icon = {
             url: place.icon,
             size: new google.maps.Size(35, 35),
@@ -539,7 +538,7 @@ function createMarkersForPlaces(places) {
         } else {
             bounds.extend(place.geometry.location);
         }
-    }
+    });
     map.fitBounds(bounds);
 }
 // This is the PLACE DETAILS search - it's the most detailed so it's only
