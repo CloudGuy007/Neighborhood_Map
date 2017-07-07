@@ -6,80 +6,97 @@
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Neighborhood Map</title>
-        <link rel=stylesheet type=text/css href="static/styles.css">
-        <link rel=stylesheet type=text/css href="static/bootstrap.css">
-        <script src="js/lib/knockout-3.4.2.js"></script>
+        <link rel="stylesheet" href="static/styles.css">
+        <link rel="stylesheet" href="static/bootstrap.css">
+        <link rel="shortcut icon" type="image/x-icon" href="static/favicon.ico">
     </head>
 
     <body>
         <div class="container">
-            <div class="options-box">
-                <h1>North York Places Map</h1>
-                <button type="button" class="btn btn-link btn-xs" onclick="myFunction()">
-                    Show/Hide Instruments Pannel
-                </button>
-                <div id="myDIV">
-                    <div>
-                        <input id="show-listings" type="button" value="Show Listings" class="btn btn-primary">
-                        <input id="hide-listings" type="button" value="Hide Listings" class="btn btn-primary">
+            <aside>
+                <div class="col-md-4 options-box">
+                    <div class="row">
+                        <h1>North York Places Map</h1>
                     </div>
-                    <hr>
-                    <div>
-                        <span class="text"> Draw a shape to search within it for homes!</span>
-                        <input id="toggle-drawing" type="button" value="Drawing Tools" class="btn btn-primary">
+                    <div class="row">
+                        <button type="button" class="btn1 btn-link btn-xs text-center" onclick="myFunction()">
+                        Show/Hide Instruments Pannel
+                    </button>
                     </div>
-                    <hr>
-                    <div class="zoomer">
-                        <input id="zoom-to-area-text" type="text" placeholder="Enter your favorite area!">
-                        <input id="zoom-to-area" type="button" value="Zoom" class="btn btn-primary">
-                    </div>
-                    <div class="zoomer">
-                        <span class="text"> Within </span>
-                        <select id="max-duration">
+                    <div id="myDIV">
+                        <div class="row justify-content-md-center">
+                            <div class="col-sm-6">
+                                <input id="show-listings" type="button" value="Show Listings" class="btn1 btn-primary text-center">
+                            </div>
+                            <div class="col-sm-6">
+                                <input id="hide-listings" type="button" value="Hide Listings" class="btn1 btn-primary text-center">
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-7">
+                                <span class="text"> Draw a shape to search within it!</span>
+                            </div>
+                            <div class="col-md-5">
+                                <input id="toggle-drawing" type="button" value="Drawing Tools" class="btn btn-primary">
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row zoomer">
+                            <div class="col-sm-8">
+                                <input id="zoom-to-area-text" type="text" placeholder="Enter your favorite area!">
+                            </div>
+                            <div class="col-sm-4">
+                                <input id="zoom-to-area" type="button" value="Zoom" class="btn btn-primary">
+                            </div>
+                        </div>
+                        <div class="zoomer">
+                            <span class="text"> Within </span>
+                            <select id="max-duration">
                         <option value="10">10 min</option>
                         <option value="15">15 min</option>
                         <option value="30">30 min</option>
                         <option value="60">1 hour</option>
                     </select>
-                        <select id="mode">
+                            <select id="mode">
                         <option value="DRIVING">drive</option>
                         <option value="WALKING">walk</option>
                         <option value="BICYCLING">bike</option>
                         <option value="TRANSIT">transit ride</option>
                     </select>
-                        <span class="text">of</span>
-                        <input id="search-within-time-text" type="text" placeholder="Ex: Google Office Toronto or 111 Richmond St W, Toronto, ON">
-                        <input id="search-within-time" type="button" value="Go" class="btn btn-primary">
+                            <span class="text">of</span>
+                            <input id="search-within-time-text" type="text" placeholder="Ex: Google Office Toronto or 111 Richmond St W, Toronto, ON">
+                            <input id="search-within-time" type="button" value="Go" class="btn btn-primary">
+                        </div>
+                        <hr>
+                        <div>
+                            <span class="text">Look for places near</span>
+                            <input id="places-search" type="text" placeholder="Ex: Pizza delivery in Toronto">
+                            <input id="go-places" type="button" value="Go" class="btn btn-primary">
+                        </div>
                     </div>
-                    <hr>
-                    <div>
-                        <span class="text">Look for places near</span>
-                        <input id="places-search" type="text" placeholder="Ex: Pizza delivery in Toronto">
-                        <input id="go-places" type="button" value="Go" class="btn btn-primary">
-                    </div>
-                </div>
-                <h4>Places</h4>
-                <input type="text" id="myInput" onkeyup="filter()" placeholder="Search for places..">
-                <div class="scroll" id="myUL">
-                    <ul data-bind="foreach: places">
-                        <li>
-                            <a href='#'>
+                    <h4>Places</h4>
+                    <input type="text" id="my-Input" onkeyup="filter()" placeholder="Search for places..">
+                    <div class="scroll" id="my-UL">
+                        <ul data-bind="foreach: places">
+                            <li>
+                                <a href="#">
                             <input data-bind="value: title, click: $parent.zoomToPlace, text: address"
                                 type="button" class="btn btn-small btn-link" id="zoomTo">
                             <span class="weather"></span>
                             </a>
-                        </li>
-                    </ul>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-
-            </div>
-            <div id="map"></div>
+            </aside>
+            <div class="col-md-8" id="map"></div>
         </div>
+        <script src="js/lib/knockout-3.4.2.js"></script>
         <script src="js/lib/jquery.min.js"></script>
         <script src="js/app.js"></script>
         <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,drawing,geometry&key=AIzaSyAb9LEafeIzz06ayPvMDzguMYP4g0fBkIk&v=3&callback=initMap">
         </script>
-
     </body>
 
 </html>

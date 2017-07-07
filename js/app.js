@@ -61,50 +61,6 @@ function initMap() {
     // Bias the searchbox to within the bounds of the map.
     searchBox.setBounds(map.getBounds());
 
-    // These are the real estate listings that will be shown to the user.
-    var locations = [{
-            title: 'Kavkaz Restaurant',
-            location: {
-                lat: 43.78825,
-                lng: -79.467264
-            }
-        },
-        {
-            title: 'A Yiddishe Mame Restaurant',
-            location: {
-                lat: 43.808537,
-                lng: -79.470641
-            }
-        },
-        {
-            title: 'Babushka Club',
-            location: {
-                lat: 43.836554,
-                lng: -79.50581
-            }
-        },
-        {
-            title: 'Mint Lounge',
-            location: {
-                lat: 43.796283,
-                lng: -79.417449
-            }
-        },
-        {
-            title: 'Mezza Notte',
-            location: {
-                lat: 43.811911,
-                lng: -79.452171
-            }
-        },
-        {
-            title: 'Bagel World',
-            location: {
-                lat: 43.812108,
-                lng: -79.452992
-            }
-        }
-    ];
     var largeInfowindow = new google.maps.InfoWindow();
     // Initialize the drawing manager.
     var drawingManager = new google.maps.drawing.DrawingManager({
@@ -133,7 +89,8 @@ function initMap() {
             title: title,
             animation: google.maps.Animation.DROP,
             icon: defaultIcon,
-            id: i
+            id: i,
+            map: map
         });
         // Push the marker to our array of markers.
         markers.push(marker);
@@ -151,8 +108,6 @@ function initMap() {
         });
     });
     document.getElementById('show-listings').addEventListener(
-        'click', showListings);
-    document.getElementById('zoomTo').addEventListener(
         'click', showListings);
     document.getElementById('hide-listings').addEventListener(
         'click',
@@ -483,7 +438,7 @@ function searchBoxPlaces(searchBox) {
         createMarkersForPlaces(places);
     }
 }
-// This function firest when the user select "go" on the places search.
+// This function fires when the user select "go" on the places search.
 // It will do a nearby search using the entered query string or place.
 function textSearchPlaces() {
     var bounds = map.getBounds();
@@ -619,7 +574,7 @@ var locations = [{
         title: 'Kavkaz Restaurant',
         address: '1881 Steeles Ave W, North York, ON M3H 5Y4',
         city: 'North York',
-        temp: '',
+        id: '0',
         location: {
             lat: 43.78825,
             lng: -79.467264
@@ -629,7 +584,7 @@ var locations = [{
         title: 'A Yiddishe Mame Restaurant',
         address: '1416 Centre St, Thornhill, ON L4J 8A1',
         city: 'Thornhill',
-        temp: '',
+        id: '1',
         location: {
             lat: 43.808537,
             lng: -79.470641
@@ -639,7 +594,7 @@ var locations = [{
         title: 'Babushka Club',
         address: '9141 Keele St, Concord, ON L4K 5B4',
         city: 'Concord',
-        temp: '',
+        id: '2',
         location: {
             lat: 43.836554,
             lng: -79.50581
@@ -649,7 +604,7 @@ var locations = [{
         title: 'Mint Lounge & Karaoke',
         address: '6267 Yonge St, North York, ON M2M 3X6',
         city: 'North York',
-        temp: '',
+        id: '3',
         location: {
             lat: 43.796283,
             lng: -79.417449
@@ -659,7 +614,7 @@ var locations = [{
         title: 'Mezza Notte',
         address: '11 Disera Dr, Thornhill, ON L4J 0A7',
         city: 'Thornhill',
-        temp: '',
+        id: '4',
         location: {
             lat: 43.811911,
             lng: -79.452171
@@ -669,7 +624,7 @@ var locations = [{
         title: 'Bagel World',
         address: '10 Disera Dr, Thornhill, ON L4J 0A7',
         city: 'Thornhill',
-        temp: '',
+        id: '5',
         location: {
             lat: 43.812108,
             lng: -79.452992
@@ -683,18 +638,23 @@ function PlacesList() {
     self.places = ko.observableArray(locations);
     self.address = ko.observable();
     self.title = ko.observable();
+    self.id = ko.observable();
     self.zoomToPlace = function() {
         // Initialize the geocoder.
         var geocoder = new google.maps.Geocoder();
         // Get the place.
         var address = this.address;
+        var id = this.id;
         // Geocode the address/area entered to get the center. Then, center the map on it and zoom in
         geocoder.geocode({
             address: address,
         }, function(results, status) {
             map.setCenter(results[0].geometry.location);
             map.setZoom(15);
+            google.maps.event.trigger(markers[id], 'click');
         });
+
+
     };
 }
 
