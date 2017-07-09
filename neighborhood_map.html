@@ -26,7 +26,8 @@
                     <div id="myDIV">
                         <div class="row justify-content-md-center">
                             <div class="col-sm-6">
-                                <input id="show-listings" type="button" value="Show Listings" class="btn1 btn-primary text-center">
+                                <input id="show-listings" type="button" value="Show Listings" class="btn1 btn-primary text-center"
+                                    data-bind="click: showListings">
                             </div>
                             <div class="col-sm-6">
                                 <input id="hide-listings" type="button" value="Hide Listings" class="btn1 btn-primary text-center">
@@ -76,14 +77,12 @@
                         </div>
                     </div>
                     <h4>Places</h4>
-                    <input type="text" id="my-Input" onkeyup="filter()" placeholder="Search for places..">
+                    <input type="text" id="my-Input" data-bind="textInput: filter" placeholder="Search for places..">
                     <div class="scroll" id="my-UL">
-                        <ul data-bind="foreach: places">
+                        <ul data-bind="foreach: visiblePlaces">
                             <li>
-                                <a href="#">
-                            <input data-bind="value: title, click: $parent.zoomToPlace, text: address"
-                                type="button" class="btn btn-small btn-link" id="zoomTo">
-                            </a>
+                                <input data-bind="value: title, click: $parent.zoomToPlace, text: address" type="button"
+                                    class="btn btn-small btn-link" id="zoomTo">
                             </li>
                         </ul>
                     </div>

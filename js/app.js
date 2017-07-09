@@ -1,13 +1,9 @@
 // Google Maps API
-
 var map;
-
 // Create a new blank array for all the listing markers.
 var markers = [];
-
 // This global polygon variable is to ensure only ONE polygon is rendered.
 var polygon = null;
-
 // Create placemarkers array to use in multiple functions to have control
 // over the number of places that show.
 var placeMarkers = [];
@@ -107,8 +103,6 @@ function initMap() {
             this.setIcon(defaultIcon);
         });
     });
-    document.getElementById('show-listings').addEventListener(
-        'click', showListings);
     document.getElementById('hide-listings').addEventListener(
         'click',
         function() {
@@ -221,15 +215,7 @@ function populateInfoWindow(marker, infowindow) {
     }
 }
 // This function will loop through the markers array and display them all.
-function showListings() {
-    var bounds = new google.maps.LatLngBounds();
-    // Extend the boundaries of the map for each marker and display the marker
-    for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(map);
-        bounds.extend(markers[i].position);
-    }
-    map.fitBounds(bounds);
-}
+
 // This function will loop through the listings and hide them all.
 function hideMarkers(markers) {
     for (var i = 0; i < markers.length; i++) {
@@ -565,7 +551,6 @@ function getPlacesDetails(marker, infowindow) {
 
 // List, Filter and Other Support Functions
 
-
 // Shows and Hides instrument pannel
 function myFunction() {
     var x = document.getElementById('myDIV');
@@ -577,7 +562,6 @@ function myFunction() {
 }
 
 // Places List
-
 // These are the real estate listings that will be shown to the user.
 var locations = [{
         title: 'Kavkaz Restaurant',
@@ -641,14 +625,22 @@ var locations = [{
     }
 ];
 
-// List of Places - provides list view of places and on click zooms map and shows the market
-function PlacesList() {
+// viewModel - provides list view of places, on click zooms map, shows the marker, infowindow, current weather, etc. It also works with show/hide listings and other functions.
+function viewModel() {
     var self = this;
     self.places = ko.observableArray(locations);
     self.address = ko.observable();
     self.city = ko.observable();
     self.title = ko.observable();
     self.id = ko.observable();
+    this.filter = ko.observable();
+    this.visiblePlaces = ko.computed(function() {
+        return this.places().filter(function(place) {
+            if (!self.filter() || place.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1)
+                return place;
+        });
+    }, this);
+    //Zooms to a selected marker, open infowindow and displays current weather
     self.zoomToPlace = function() {
         // Initialize the geocoder.
         var geocoder = new google.maps.Geocoder();
@@ -657,7 +649,6 @@ function PlacesList() {
         var id = this.id;
         var city = this.city;
         var weatherAPIXU = "http://api.apixu.com/v1/current.json?key=453477e8eec14cbc805210143171706&q=" + city;
-        console.log(weatherAPIXU);
         $.getJSON(weatherAPIXU, function(data) {
             var forecast = data.current.temp_c;
             $(".weather").html(forecast + '° C');
@@ -671,26 +662,14 @@ function PlacesList() {
             google.maps.event.trigger(markers[id], 'click');
         });
     };
-}
-
-ko.applyBindings(new PlacesList(), document.getElementById("myUL"));
-
-
-// Filtering function to search through list of places
-function filter() {
-    // Declare variables
-    var input, filter, ul, li, a, i;
-    input = document.getElementById('myInput');
-    filter = input.value.toUpperCase();
-    ul = document.getElementById("myUL");
-    li = ul.getElementsByTagName('li');
-    // Loop through all list items, and hide those who don't match the search query
-    for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByTagName("a")[0];
-        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
-            li[i].style.display = "";
-        } else {
-            li[i].style.display = "none";
+    self.showListings = function() {
+        var bounds = new google.maps.LatLngBounds();
+        // Extend the boundaries of the map for each marker and display the marker
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(map);
+            bounds.extend(markers[i].position);
         }
-    }
+        map.fitBounds(bounds);
+    };
 }
+ko.applyBindings(new viewModel());
