@@ -1,3 +1,7 @@
+.container {
+  background-color: #000000;
+}
+
 input {
   font-size: 12px;
 }
@@ -13,8 +17,6 @@ h4 {
   color: #8ac5ff;
 }
 
-
-
 hr {
   background: #d0d7d9;
   height: 1px;
@@ -27,7 +29,7 @@ hr {
 }
 
 .options-box {
-  background: #170202;
+  background: #000000;
   border: 1px solid #999;
   border-radius: 3px;
   height: 100%;

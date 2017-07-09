@@ -162,6 +162,15 @@ function initMap() {
             searchWithinPolygon);
     });
 }
+
+
+// Return a city name that matches a marker id
+function getCityName(locations, marker) {
+    for (var i = 0, iLen = locations.length; i < iLen; i++) {
+        if (locations[i].id == marker.id) return locations[i].city;
+    }
+}
+
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
@@ -185,7 +194,7 @@ function populateInfoWindow(marker, infowindow) {
                 var nearStreetViewLocation = data.location.latLng;
                 var heading = google.maps.geometry.spherical.computeHeading(
                     nearStreetViewLocation, marker.position);
-                infowindow.setContent('<div>' + marker.title +
+                infowindow.setContent('<div>' + marker.title + '<p> The Current Weather is <span class="weather"></span></p>' +
                     '</div><div id="pano"></div>');
                 var panoramaOptions = {
                     position: nearStreetViewLocation,
@@ -198,7 +207,7 @@ function populateInfoWindow(marker, infowindow) {
                     document.getElementById('pano'),
                     panoramaOptions);
             } else {
-                infowindow.setContent('<div>' + marker.title +
+                infowindow.setContent('<div>' + marker.title + '<p> The Current Weather is <span class="weather"></span></p>' +
                     '</div>' +
                     '<div>No Street View Found</div>');
             }
@@ -573,7 +582,7 @@ function myFunction() {
 var locations = [{
         title: 'Kavkaz Restaurant',
         address: '1881 Steeles Ave W, North York, ON M3H 5Y4',
-        city: 'North York',
+        city: 'Toronto',
         id: '0',
         location: {
             lat: 43.78825,
@@ -603,7 +612,7 @@ var locations = [{
     {
         title: 'Mint Lounge & Karaoke',
         address: '6267 Yonge St, North York, ON M2M 3X6',
-        city: 'North York',
+        city: 'Toronto',
         id: '3',
         location: {
             lat: 43.796283,
@@ -637,6 +646,7 @@ function PlacesList() {
     var self = this;
     self.places = ko.observableArray(locations);
     self.address = ko.observable();
+    self.city = ko.observable();
     self.title = ko.observable();
     self.id = ko.observable();
     self.zoomToPlace = function() {
@@ -645,6 +655,13 @@ function PlacesList() {
         // Get the place.
         var address = this.address;
         var id = this.id;
+        var city = this.city;
+        var weatherAPIXU = "http://api.apixu.com/v1/current.json?key=453477e8eec14cbc805210143171706&q=" + city;
+        console.log(weatherAPIXU);
+        $.getJSON(weatherAPIXU, function(data) {
+            var forecast = data.current.temp_c;
+            $(".weather").html(forecast + '° C');
+        });
         // Geocode the address/area entered to get the center. Then, center the map on it and zoom in
         geocoder.geocode({
             address: address,
@@ -653,26 +670,10 @@ function PlacesList() {
             map.setZoom(15);
             google.maps.event.trigger(markers[id], 'click');
         });
-
-
     };
 }
 
 ko.applyBindings(new PlacesList(), document.getElementById("myUL"));
-
-// Weather API provided by https://www.apixu.com
-$(document).ready(function loadData() {
-    var weatherAPIXU = "http://api.apixu.com/v1/current.json?key=453477e8eec14cbc805210143171706&q=Toronto";
-    $.getJSON(weatherAPIXU, function(data) {
-        var forecast = data.current.temp_c;
-        var weather = $(".weather");
-        weather.append(forecast + '° C');
-    }).error(function(e) {
-        $(".weather").append('Sorry! Not Loaded');
-    });
-    $('.weather').submit(loadData);
-});
-
 
 
 // Filtering function to search through list of places
