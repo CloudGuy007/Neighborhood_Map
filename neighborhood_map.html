@@ -45,10 +45,11 @@
                         <hr>
                         <div class="row zoomer">
                             <div class="col-sm-8">
-                                <input id="zoom-to-area-text" type="text" placeholder="Enter your favorite area!">
+                                <input id="zoom-to-area-text" type="text" placeholder="Enter your favorite area!"
+                                    data-bind="textInput: zaddress">
                             </div>
                             <div class="col-sm-4">
-                                <input id="zoom-to-area" type="button" value="Zoom" class="btn btn-primary">
+                                <input id="zoom-to-area" type="button" value="Zoom" class="btn btn-primary" data-bind="click: zoomToArea">
                             </div>
                         </div>
                         <div class="zoomer">
@@ -93,7 +94,8 @@
         <script src="js/lib/knockout-3.4.2.js"></script>
         <script src="js/lib/jquery.min.js"></script>
         <script src="js/app.js"></script>
-        <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,drawing,geometry&key=AIzaSyAb9LEafeIzz06ayPvMDzguMYP4g0fBkIk&v=3&callback=initMap">
+        <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,drawing,geometry&key=AIzaSyAb9LEafeIzz06ayPvMDzguMYP4g0fBkIk&v=3&callback=initMap"
+            onerror="googleError()">
         </script>
     </body>
 

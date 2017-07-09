@@ -113,11 +113,6 @@ function initMap() {
         function() {
             toggleDrawing(drawingManager);
         });
-    document.getElementById('zoom-to-area').addEventListener(
-        'click',
-        function() {
-            zoomToArea();
-        });
     document.getElementById('search-within-time').addEventListener(
         'click',
         function() {
@@ -261,36 +256,7 @@ function searchWithinPolygon() {
         }
     }
 }
-// This function takes the input value in the find nearby area text input
-// locates it, and then zooms into that area. This is so that the user can
-// show all listings, then decide to focus on one area of the map.
-function zoomToArea() {
-    // Initialize the geocoder.
-    var geocoder = new google.maps.Geocoder();
-    // Get the address or place that the user entered.
-    var address = document.getElementById('zoom-to-area-text').value;
-    // Make sure the address isn't blank.
-    if (address === '') {
-        window.alert('You must enter an area, or address.');
-    } else {
-        // Geocode the address/area entered to get the center. Then, center the map on it and zoom in
-        geocoder.geocode({
-            address: address,
-            componentRestrictions: {
-                locality: 'Toronto'
-            }
-        }, function(results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-                map.setCenter(results[0].geometry.location);
-                map.setZoom(15);
-            } else {
-                window.alert(
-                    'We could not find that location - try entering a more' +
-                    ' specific place.');
-            }
-        });
-    }
-}
+
 // This function allows the user to input a desired travel time, in
 // minutes, and a travel mode, and a location - and only show the listings
 // that are within that travel time (via that travel mode) of the location
@@ -625,7 +591,7 @@ var locations = [{
     }
 ];
 
-// viewModel - provides list view of places, on click zooms map, shows the marker, infowindow, current weather, etc. It also works with show/hide listings and other functions.
+// ViewModel - provides list view of places, on click zooms map, shows the marker, infowindow, current weather, etc. It also works with show/hide listings and other functions.
 function viewModel() {
     var self = this;
     self.places = ko.observableArray(locations);
@@ -633,6 +599,7 @@ function viewModel() {
     self.city = ko.observable();
     self.title = ko.observable();
     self.id = ko.observable();
+    this.zaddress = ko.observable();
     this.filter = ko.observable();
     this.visiblePlaces = ko.computed(function() {
         return this.places().filter(function(place) {
@@ -670,6 +637,33 @@ function viewModel() {
             bounds.extend(markers[i].position);
         }
         map.fitBounds(bounds);
+    };
+    // This function takes the input value in the find nearby area text input
+    // locates it, and then zooms into that area. This is so that the user can
+    // show all listings, then decide to focus on one area of the map.
+    self.zoomToArea = function() {
+        // Initialize the geocoder.
+        var geocoder = new google.maps.Geocoder();
+        // Get the address or place that the user entered.
+        var zaddress = this.zaddress;
+        // Make sure the address isn't blank.
+        if (zaddress === '') {
+            window.alert('You must enter an area, or address.');
+        } else {
+            // Geocode the address/area entered to get the center. Then, center the map on it and zoom in
+            geocoder.geocode({
+                address: zaddress,
+            }, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    map.setCenter(results[0].geometry.location);
+                    map.setZoom(15);
+                } else {
+                    window.alert(
+                        'We could not find that location - try entering a more' +
+                        ' specific place.');
+                }
+            });
+        }
     };
 }
 ko.applyBindings(new viewModel());
