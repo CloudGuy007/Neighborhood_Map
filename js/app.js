@@ -380,18 +380,16 @@ function getPlacesDetails(marker, infowindow) {
         }
     });
 }
+// Hide markers as global variable
+function hideMarkers() {
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+    }
+}
 
 // List, Filter and Other Support Functions
 
-// Shows and Hides instrument pannel
-function myFunction() {
-    var x = document.getElementById('myDIV');
-    if (x.style.display === 'none') {
-        x.style.display = 'block';
-    } else {
-        x.style.display = 'none';
-    }
-}
+
 
 // ViewModel - provides list view of places, on click zooms map, shows the marker, infowindow, current weather, etc. It also works with show/hide listings and other functions.
 function viewModel() {
@@ -577,11 +575,21 @@ function viewModel() {
             drawingManager.setMap(map);
         }
     };
+    // Shows and Hides instrument pannel
+    self.showandhide = function() {
+        var x = document.getElementById('myDIV');
+        if (x.style.display === 'none') {
+            x.style.display = 'block';
+        } else {
+            x.style.display = 'none';
+        }
+    };
 }
 var vm = new viewModel();
 ko.applyBindings(vm);
 
 // Functions previously used, but no longer needed
+
 // Return a city name that matches a marker id
 //function getCityName(locations, marker) {
 //    for (var i = 0, iLen = locations.length; i < iLen; i++) {
