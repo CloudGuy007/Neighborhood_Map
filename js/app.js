@@ -7,6 +7,8 @@ var polygon = null;
 // Create placemarkers array to use in multiple functions to have control
 // over the number of places that show.
 var placeMarkers = [];
+// Define drawingManager as a global variable
+var drawingManager;
 
 function initMap() {
     // Create a styles array to use with the map.
@@ -56,7 +58,17 @@ function initMap() {
         document.getElementById('places-search'));
     // Bias the searchbox to within the bounds of the map.
     searchBox.setBounds(map.getBounds());
-
+    // Initialize the drawing manager.
+    var drawingManager = new google.maps.drawing.DrawingManager({
+        drawingMode: google.maps.drawing.OverlayType.POLYGON,
+        drawingControl: true,
+        drawingControlOptions: {
+            position: google.maps.ControlPosition.TOP_LEFT,
+            drawingModes: [
+                google.maps.drawing.OverlayType.POLYGON
+            ]
+        }
+    });
     var largeInfowindow = new google.maps.InfoWindow();
     // Style the markers a bit. This will be our listing marker icon.
     var defaultIcon = makeMarkerIcon('0091ff');
@@ -96,6 +108,27 @@ function initMap() {
     // picklist and retrieve more details for that place.
     searchBox.addListener('places_changed', function() {
         searchBoxPlaces(this);
+    });
+
+    drawingManager.addListener('overlaycomplete', function(event) {
+        // First, check if there is an existing polygon.
+        // If there is, get rid of it and remove the markers
+        if (polygon) {
+            polygon.setMap(null);
+            hideMarkers(markers);
+        }
+        // Switching the drawing mode to the HAND (i.e., no longer drawing).
+        drawingManager.setDrawingMode(null);
+        // Creating a new editable polygon from the overlay.
+        polygon = event.overlay;
+        polygon.setEditable(true);
+        // Searching within the polygon.
+        searchWithinPolygon(polygon);
+        // Make sure the search is re-done if the poly is changed.
+        polygon.getPath().addListener('set_at',
+            searchWithinPolygon);
+        polygon.getPath().addListener('insert_at',
+            searchWithinPolygon);
     });
 }
 
@@ -387,6 +420,7 @@ function hideMarkers() {
     }
 }
 
+
 // List, Filter and Other Support Functions
 
 
@@ -531,40 +565,6 @@ function viewModel() {
     };
     // This shows and hides (respectively) the drawing options.
     self.toggleDrawing = function() {
-        // Initialize the drawing manager.
-        var drawingManager = new google.maps.drawing.DrawingManager({
-            drawingMode: google.maps.drawing.OverlayType.POLYGON,
-            drawingControl: true,
-            drawingControlOptions: {
-                position: google.maps.ControlPosition.TOP_LEFT,
-                drawingModes: [
-                    google.maps.drawing.OverlayType.POLYGON
-                ]
-            }
-        });
-        // Add an event listener so that the polygon is captured,  call the
-        // searchWithinPolygon function. This will show the markers in the polygon,
-        // and hide any outside of it.
-        drawingManager.addListener('overlaycomplete', function(event) {
-            // First, check if there is an existing polygon.
-            // If there is, get rid of it and remove the markers
-            if (polygon) {
-                polygon.setMap(null);
-                hideMarkers(markers);
-            }
-            // Switching the drawing mode to the HAND (i.e., no longer drawing).
-            drawingManager.setDrawingMode(null);
-            // Creating a new editable polygon from the overlay.
-            polygon = event.overlay;
-            polygon.setEditable(true);
-            // Searching within the polygon.
-            searchWithinPolygon(polygon);
-            // Make sure the search is re-done if the poly is changed.
-            polygon.getPath().addListener('set_at',
-                searchWithinPolygon);
-            polygon.getPath().addListener('insert_at',
-                searchWithinPolygon);
-        });
         if (drawingManager.map) {
             drawingManager.setMap(null);
             // In case the user drew anything, get rid of the polygon
