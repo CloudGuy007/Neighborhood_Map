@@ -578,7 +578,8 @@ function viewModel() {
         }
     };
 }
-ko.applyBindings(new viewModel());
+var vm = new viewModel();
+ko.applyBindings(vm);
 
 // Functions previously used, but no longer needed
 // Return a city name that matches a marker id
