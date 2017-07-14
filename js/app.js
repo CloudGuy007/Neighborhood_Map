@@ -99,13 +99,6 @@ function initMap() {
     });
 }
 
-// Return a city name that matches a marker id
-function getCityName(locations, marker) {
-    for (var i = 0, iLen = locations.length; i < iLen; i++) {
-        if (locations[i].id == marker.id) return locations[i].city;
-    }
-}
-
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
@@ -586,3 +579,11 @@ function viewModel() {
     };
 }
 ko.applyBindings(new viewModel());
+
+// Functions previously used, but no longer needed
+// Return a city name that matches a marker id
+//function getCityName(locations, marker) {
+//    for (var i = 0, iLen = locations.length; i < iLen; i++) {
+//        if (locations[i].id == marker.id) return locations[i].city;
+//    }
+//}
