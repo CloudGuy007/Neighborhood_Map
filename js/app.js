@@ -59,7 +59,7 @@ function initMap() {
     // Bias the searchbox to within the bounds of the map.
     searchBox.setBounds(map.getBounds());
     // Initialize the drawing manager.
-    var drawingManager = new google.maps.drawing.DrawingManager({
+    drawingManager = new google.maps.drawing.DrawingManager({
         drawingMode: google.maps.drawing.OverlayType.POLYGON,
         drawingControl: true,
         drawingControlOptions: {
@@ -564,7 +564,7 @@ function viewModel() {
         }
     };
     // This shows and hides (respectively) the drawing options.
-    self.toggleDrawing = function() {
+    toggleDrawing = function() {
         if (drawingManager.map) {
             drawingManager.setMap(null);
             // In case the user drew anything, get rid of the polygon
