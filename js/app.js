@@ -103,30 +103,16 @@ function initMap() {
             this.setIcon(defaultIcon);
         });
     });
-    document.getElementById('hide-listings').addEventListener(
-        'click',
-        function() {
-            hideMarkers(markers);
-        });
     document.getElementById('toggle-drawing').addEventListener(
         'click',
         function() {
             toggleDrawing(drawingManager);
-        });
-    document.getElementById('search-within-time').addEventListener(
-        'click',
-        function() {
-            searchWithinTime();
         });
     // Listen for the event fired when the user selects a prediction from the
     // picklist and retrieve more details for that place.
     searchBox.addListener('places_changed', function() {
         searchBoxPlaces(this);
     });
-    // Listen for the event fired when the user selects a prediction and clicks
-    // "go" more details for that place.
-    document.getElementById('go-places').addEventListener('click',
-        textSearchPlaces);
     // Add an event listener so that the polygon is captured,  call the
     // searchWithinPolygon function. This will show the markers in the polygon,
     // and hide any outside of it.
@@ -209,14 +195,7 @@ function populateInfoWindow(marker, infowindow) {
         infowindow.open(map, marker);
     }
 }
-// This function will loop through the markers array and display them all.
 
-// This function will loop through the listings and hide them all.
-function hideMarkers(markers) {
-    for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(null);
-    }
-}
 // This function takes in a COLOR, and then creates a new marker
 // icon of that color. The icon will be 21 px wide by 34 high, have an origin
 // of 0, 0 and be anchored at 10, 34).
@@ -254,46 +233,6 @@ function searchWithinPolygon() {
         } else {
             markers[i].setMap(null);
         }
-    }
-}
-
-// This function allows the user to input a desired travel time, in
-// minutes, and a travel mode, and a location - and only show the listings
-// that are within that travel time (via that travel mode) of the location
-function searchWithinTime() {
-    // Initialize the distance matrix service.
-    var distanceMatrixService = new google.maps.DistanceMatrixService();
-    var address = document.getElementById('search-within-time-text')
-        .value;
-    // Check to make sure the place entered isn't blank.
-    if (address === '') {
-        window.alert('You must enter an address.');
-    } else {
-        hideMarkers(markers);
-        // Use the distance matrix service to calculate the duration of the
-        // routes between all our markers, and the destination address entered
-        // by the user. Then put all the origins into an origin matrix.
-        var origins = [];
-        for (var i = 0; i < markers.length; i++) {
-            origins[i] = markers[i].position;
-        }
-        var destination = address;
-        var mode = document.getElementById('mode').value;
-        // Now that both the origins and destination are defined, get all the
-        // info for the distances between them.
-        distanceMatrixService.getDistanceMatrix({
-            origins: origins,
-            destinations: [destination],
-            travelMode: google.maps.TravelMode[mode],
-            unitSystem: google.maps.UnitSystem.IMPERIAL,
-        }, function(response, status) {
-            if (status !== google.maps.DistanceMatrixStatus
-                .OK) {
-                window.alert('Error was: ' + status);
-            } else {
-                displayMarkersWithinTime(response);
-            }
-        });
     }
 }
 // This function will go through each of the results, and,
@@ -399,22 +338,7 @@ function searchBoxPlaces(searchBox) {
         createMarkersForPlaces(places);
     }
 }
-// This function fires when the user select "go" on the places search.
-// It will do a nearby search using the entered query string or place.
-function textSearchPlaces() {
-    var bounds = map.getBounds();
-    hideMarkers(placeMarkers);
-    var placesService = new google.maps.places.PlacesService(map);
-    placesService.textSearch({
-        query: document.getElementById('places-search').value,
-        bounds: bounds
-    }, function(results, status) {
-        if (status === google.maps.places.PlacesServiceStatus
-            .OK) {
-            createMarkersForPlaces(results);
-        }
-    });
-}
+
 // This function creates markers for each place found in either places search.
 function createMarkersForPlaces(places) {
     var bounds = new google.maps.LatLngBounds();
@@ -527,70 +451,6 @@ function myFunction() {
     }
 }
 
-// Places List
-// These are the real estate listings that will be shown to the user.
-var locations = [{
-        title: 'Kavkaz Restaurant',
-        address: '1881 Steeles Ave W, North York, ON M3H 5Y4',
-        city: 'Toronto',
-        id: '0',
-        location: {
-            lat: 43.78825,
-            lng: -79.467264
-        }
-    },
-    {
-        title: 'A Yiddishe Mame Restaurant',
-        address: '1416 Centre St, Thornhill, ON L4J 8A1',
-        city: 'Thornhill',
-        id: '1',
-        location: {
-            lat: 43.808537,
-            lng: -79.470641
-        }
-    },
-    {
-        title: 'Babushka Club',
-        address: '9141 Keele St, Concord, ON L4K 5B4',
-        city: 'Concord',
-        id: '2',
-        location: {
-            lat: 43.836554,
-            lng: -79.50581
-        }
-    },
-    {
-        title: 'Mint Lounge & Karaoke',
-        address: '6267 Yonge St, North York, ON M2M 3X6',
-        city: 'Toronto',
-        id: '3',
-        location: {
-            lat: 43.796283,
-            lng: -79.417449
-        }
-    },
-    {
-        title: 'Mezza Notte',
-        address: '11 Disera Dr, Thornhill, ON L4J 0A7',
-        city: 'Thornhill',
-        id: '4',
-        location: {
-            lat: 43.811911,
-            lng: -79.452171
-        }
-    },
-    {
-        title: 'Bagel World',
-        address: '10 Disera Dr, Thornhill, ON L4J 0A7',
-        city: 'Thornhill',
-        id: '5',
-        location: {
-            lat: 43.812108,
-            lng: -79.452992
-        }
-    }
-];
-
 // ViewModel - provides list view of places, on click zooms map, shows the marker, infowindow, current weather, etc. It also works with show/hide listings and other functions.
 function viewModel() {
     var self = this;
@@ -600,6 +460,8 @@ function viewModel() {
     self.title = ko.observable();
     self.id = ko.observable();
     this.zaddress = ko.observable();
+    this.taddress = ko.observable();
+    this.paddress = ko.observable();
     this.filter = ko.observable();
     this.visiblePlaces = ko.computed(function() {
         return this.places().filter(function(place) {
@@ -629,6 +491,7 @@ function viewModel() {
             google.maps.event.trigger(markers[id], 'click');
         });
     };
+    // This function will loop through the markers array and display them all.
     self.showListings = function() {
         var bounds = new google.maps.LatLngBounds();
         // Extend the boundaries of the map for each marker and display the marker
@@ -645,7 +508,7 @@ function viewModel() {
         // Initialize the geocoder.
         var geocoder = new google.maps.Geocoder();
         // Get the address or place that the user entered.
-        var zaddress = this.zaddress;
+        var zaddress = this.zaddress();
         // Make sure the address isn't blank.
         if (zaddress === '') {
             window.alert('You must enter an area, or address.');
@@ -663,6 +526,67 @@ function viewModel() {
                         ' specific place.');
                 }
             });
+        }
+    };
+    // This function allows the user to input a desired travel time, in
+    // minutes, and a travel mode, and a location - and only show the listings
+    // that are within that travel time (via that travel mode) of the location
+    self.searchWithinTime = function() {
+        // Initialize the distance matrix service.
+        var distanceMatrixService = new google.maps.DistanceMatrixService();
+        var taddress = this.taddress();
+        // Check to make sure the place entered isn't blank.
+        if (taddress === '') {
+            window.alert('You must enter an address.');
+        } else {
+            hideMarkers(markers);
+            // Use the distance matrix service to calculate the duration of the
+            // routes between all our markers, and the destination address entered
+            // by the user. Then put all the origins into an origin matrix.
+            var origins = [];
+            for (var i = 0; i < markers.length; i++) {
+                origins[i] = markers[i].position;
+            }
+            var destination = taddress;
+            var mode = document.getElementById('mode').value;
+            // Now that both the origins and destination are defined, get all the
+            // info for the distances between them.
+            distanceMatrixService.getDistanceMatrix({
+                origins: origins,
+                destinations: [destination],
+                travelMode: google.maps.TravelMode[mode],
+                unitSystem: google.maps.UnitSystem.IMPERIAL,
+            }, function(response, status) {
+                if (status !== google.maps.DistanceMatrixStatus
+                    .OK) {
+                    window.alert('Error was: ' + status);
+                } else {
+                    displayMarkersWithinTime(response);
+                }
+            });
+        }
+    };
+    // This function fires when the user select "go" on the places search.
+    // It will do a nearby search using the entered query string or place.
+    self.textSearchPlaces = function() {
+        var bounds = map.getBounds();
+        var place = this.paddress();
+        hideMarkers(placeMarkers);
+        var placesService = new google.maps.places.PlacesService(map);
+        placesService.textSearch({
+            query: place,
+            bounds: bounds
+        }, function(results, status) {
+            if (status === google.maps.places.PlacesServiceStatus
+                .OK) {
+                createMarkersForPlaces(results);
+            }
+        });
+    };
+    // This function will loop through the listings and hide them all.
+    self.hideMarkers = function() {
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(null);
         }
     };
 }

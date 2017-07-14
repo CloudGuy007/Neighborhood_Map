@@ -30,7 +30,8 @@
                                     data-bind="click: showListings">
                             </div>
                             <div class="col-sm-6">
-                                <input id="hide-listings" type="button" value="Hide Listings" class="btn1 btn-primary text-center">
+                                <input id="hide-listings" type="button" value="Hide Listings" class="btn1 btn-primary text-center"
+                                    data-bind="click: function() {hideMarkers(markers)}">
                             </div>
                         </div>
                         <hr>
@@ -39,7 +40,8 @@
                                 <span class="text"> Draw a shape to search within it!</span>
                             </div>
                             <div class="col-md-5">
-                                <input id="toggle-drawing" type="button" value="Drawing Tools" class="btn btn-primary">
+                                <input id="toggle-drawing" type="button" value="Drawing Tools" class="btn btn-primary"
+                                    data-bind="click: function() {toggleDrawing(drawingManager)}">
                             </div>
                         </div>
                         <hr>
@@ -67,14 +69,16 @@
                         <option value="TRANSIT">transit ride</option>
                     </select>
                             <span class="text">of</span>
-                            <input id="search-within-time-text" type="text" placeholder="Ex: Google Office Toronto or 111 Richmond St W, Toronto, ON">
-                            <input id="search-within-time" type="button" value="Go" class="btn btn-primary">
+                            <input id="search-within-time-text" type="text" placeholder="Ex: Google Office Toronto or 111 Richmond St W, Toronto, ON"
+                                data-bind="textInput: taddress">
+                            <input id="search-within-time" type="button" value="Go" class="btn btn-primary" data-bind="click: searchWithinTime">
                         </div>
                         <hr>
                         <div>
                             <span class="text">Look for places near</span>
-                            <input id="places-search" type="text" placeholder="Ex: Pizza delivery in Toronto">
-                            <input id="go-places" type="button" value="Go" class="btn btn-primary">
+                            <input id="places-search" type="text" placeholder="Ex: Pizza delivery in Toronto"
+                                data-bind="textInput: paddress">
+                            <input id="go-places" type="button" value="Go" class="btn btn-primary" data-bind="click: textSearchPlaces">
                         </div>
                     </div>
                     <h4>Places</h4>
@@ -91,6 +95,7 @@
             </aside>
             <div class="col-md-8" id="map"></div>
         </div>
+        <script src="js/locations.js"></script>
         <script src="js/lib/knockout-3.4.2.js"></script>
         <script src="js/lib/jquery.min.js"></script>
         <script src="js/app.js"></script>
