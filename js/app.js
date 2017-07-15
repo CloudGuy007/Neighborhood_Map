@@ -614,9 +614,3 @@ ko.applyBindings(vm);
 //        if (locations[i].id == marker.id) return locations[i].city;
 //    }
 //}
-// Return a marker that matches a title
-//function getCityName(locations, marker) {
-//    for (var i = 0, iLen = locations.length; i < iLen; i++) {
-//        if (locations[i].id == marker.id) return locations[i].city;
-//    }
-//}
