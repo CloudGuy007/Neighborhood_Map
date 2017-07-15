@@ -74,7 +74,7 @@ function initMap() {
     var defaultIcon = makeMarkerIcon('0091ff');
     // Create a "highlighted location" marker color for when the user
     // mouses over the marker.
-    var highlightedIcon = makeMarkerIcon('FFFF24');
+    var highlightedIcon = makeMarkerIcon('12D9E6');
     // The following group uses the location array to create an array of markers on initialize.
     locations.forEach(function(location, i) {
         // Get the position from the location array.
@@ -433,14 +433,24 @@ function viewModel() {
     self.city = ko.observable();
     self.title = ko.observable();
     self.id = ko.observable();
+    self.markers = ko.observableArray(markers);
     this.zaddress = ko.observable();
     this.taddress = ko.observable();
     this.paddress = ko.observable();
     this.filter = ko.observable();
+    //Filters markers from the search field
     this.visiblePlaces = ko.computed(function() {
         return this.places().filter(function(place) {
-            if (!self.filter() || place.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1)
+            if (!self.filter() || place.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1) {
+                for (var i = 0, iLen = markers.length; i < iLen; i++) {
+                    if (markers[i].id == place.id) {
+                        markers[i].setVisible(true);
+                    } else {
+                        markers[i].setVisible(false);
+                    }
+                }
                 return place;
+            }
         });
     }, this);
     //Zooms to a selected marker, open infowindow and displays current weather
@@ -455,6 +465,8 @@ function viewModel() {
         $.getJSON(weatherAPIXU, function(data) {
             var forecast = data.current.temp_c;
             $(".weather").html(forecast + '° C');
+        }).error(function(e) {
+            $(".weather").html('<font color="red">Sorry!Could Not Be Loaded</font>');
         });
         // Geocode the address/area entered to get the center. Then, center the map on it and zoom in
         geocoder.geocode({
@@ -463,6 +475,11 @@ function viewModel() {
             map.setCenter(results[0].geometry.location);
             map.setZoom(15);
             google.maps.event.trigger(markers[id], 'click');
+            if (markers[id].getAnimation() !== null) {
+                markers[id].setAnimation(null);
+            } else {
+                markers[id].setAnimation(google.maps.Animation.BOUNCE);
+            }
         });
     };
     // This function will loop through the markers array and display them all.
@@ -470,6 +487,7 @@ function viewModel() {
         var bounds = new google.maps.LatLngBounds();
         // Extend the boundaries of the map for each marker and display the marker
         for (var i = 0; i < markers.length; i++) {
+            markers[i].setVisible(true);
             markers[i].setMap(map);
             bounds.extend(markers[i].position);
         }
@@ -591,6 +609,12 @@ ko.applyBindings(vm);
 // Functions previously used, but no longer needed
 
 // Return a city name that matches a marker id
+//function getCityName(locations, marker) {
+//    for (var i = 0, iLen = locations.length; i < iLen; i++) {
+//        if (locations[i].id == marker.id) return locations[i].city;
+//    }
+//}
+// Return a marker that matches a title
 //function getCityName(locations, marker) {
 //    for (var i = 0, iLen = locations.length; i < iLen; i++) {
 //        if (locations[i].id == marker.id) return locations[i].city;
