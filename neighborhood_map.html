@@ -86,14 +86,14 @@
                     <div class="scroll" id="my-UL">
                         <ul data-bind="foreach: visiblePlaces">
                             <li>
-                                <input data-bind="value: title, click: $parent.zoomToPlace, text: address" type="button"
+                                <input data-bind="value: title, click: $parent.zoomToPlace, text: title" type="button"
                                     class="btn btn-small btn-link" id="zoomTo">
                             </li>
                         </ul>
                     </div>
                 </div>
             </aside>
-            <div class="col-md-8" id="map"></div>
+            <main class="col-md-8" id="map"></main>
         </div>
         <script src="js/locations.js"></script>
         <script src="js/lib/knockout-3.4.2.js"></script>

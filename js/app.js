@@ -132,6 +132,13 @@ function initMap() {
     });
 }
 
+// Return a city name that matches a marker id
+function getCityName(locations, marker) {
+    for (var i = 0, iLen = locations.length; i < iLen; i++) {
+        if (locations[i].id == marker.id) return locations[i].city;
+    }
+}
+
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
@@ -145,8 +152,21 @@ function populateInfoWindow(marker, infowindow) {
         infowindow.addListener('closeclick', function() {
             infowindow.marker = null;
         });
+        // Set Animation on clicked marker
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function() {
+            marker.setAnimation(null);
+        }, 850);
         var streetViewService = new google.maps.StreetViewService();
         var radius = 50;
+        var city = getCityName(locations, marker);
+        var weatherAPIXU = "http://api.apixu.com/v1/current.json?key=453477e8eec14cbc805210143171706&q=" + city;
+        $.getJSON(weatherAPIXU, function(data) {
+            var forecast = data.current.temp_c;
+            $(".weather").html(forecast + '° C');
+        }).fail(function(e) {
+            $(".weather").html('<font color="red">Sorry! Could Not Be Loaded</font>');
+        });
         // In case the status is OK, which means the pano was found, compute the
         // position of the streetview image, then calculate the heading, then get a
         // panorama from that and set the options
@@ -441,14 +461,12 @@ function viewModel() {
     //Filters markers from the search field
     this.visiblePlaces = ko.computed(function() {
         return this.places().filter(function(place) {
-            if (!self.filter() || place.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1) {
-                for (var i = 0, iLen = markers.length; i < iLen; i++) {
-                    if (markers[i].id == place.id) {
-                        markers[i].setVisible(true);
-                    } else {
-                        markers[i].setVisible(false);
-                    }
-                }
+            var match = !self.filter() || place.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1;
+            var id = Number(place.id);
+            if (markers[id]) {
+                markers[id].setVisible(match);
+            }
+            if (match) {
                 return place;
             }
         });
@@ -465,8 +483,8 @@ function viewModel() {
         $.getJSON(weatherAPIXU, function(data) {
             var forecast = data.current.temp_c;
             $(".weather").html(forecast + '° C');
-        }).error(function(e) {
-            $(".weather").html('<font color="red">Sorry!Could Not Be Loaded</font>');
+        }).fail(function(e) {
+            $(".weather").html('<font color="red">Sorry! Could Not Be Loaded</font>');
         });
         // Geocode the address/area entered to get the center. Then, center the map on it and zoom in
         geocoder.geocode({
@@ -475,11 +493,10 @@ function viewModel() {
             map.setCenter(results[0].geometry.location);
             map.setZoom(15);
             google.maps.event.trigger(markers[id], 'click');
-            if (markers[id].getAnimation() !== null) {
+            markers[id].setAnimation(google.maps.Animation.BOUNCE);
+            setTimeout(function() {
                 markers[id].setAnimation(null);
-            } else {
-                markers[id].setAnimation(google.maps.Animation.BOUNCE);
-            }
+            }, 850);
         });
     };
     // This function will loop through the markers array and display them all.
@@ -606,11 +623,12 @@ function viewModel() {
 var vm = new viewModel();
 ko.applyBindings(vm);
 
-// Functions previously used, but no longer needed
 
-// Return a city name that matches a marker id
-//function getCityName(locations, marker) {
-//    for (var i = 0, iLen = locations.length; i < iLen; i++) {
-//        if (locations[i].id == marker.id) return locations[i].city;
-//    }
-//}
+//Error Handlers
+
+function googleError() {
+    alert("Google Maps has failed to load. Please check your internet connection and try again.");
+}
+
+
+// Functions previously used, but no longer needed
