@@ -160,23 +160,25 @@ function populateInfoWindow(marker, infowindow) {
         var streetViewService = new google.maps.StreetViewService();
         var radius = 50;
         var city = getCityName(locations, marker);
+        // API Powered by weatherAPIXU
         var weatherAPIXU = "http://api.apixu.com/v1/current.json?key=453477e8eec14cbc805210143171706&q=" + city;
-        $.getJSON(weatherAPIXU, function(data) {
-            var forecast = data.current.temp_c;
-            $(".weather").html(forecast + '° C');
-        }).fail(function(e) {
-            $(".weather").html('<font color="red">Sorry! Could Not Be Loaded</font>');
-        });
         // In case the status is OK, which means the pano was found, compute the
         // position of the streetview image, then calculate the heading, then get a
         // panorama from that and set the options
         var getStreetView = function(data, status) {
             if (status == google.maps.StreetViewStatus.OK) {
+                $.getJSON(weatherAPIXU, function(data) {
+                    var forecast = data.current.temp_c;
+                    infowindow.setContent('<div>' + marker.title + '<p> The Current Weather is ' + forecast + '° C</p></div><div id="pano"></div>');
+                    var panorama = new google.maps.StreetViewPanorama(
+                        document.getElementById('pano'),
+                        panoramaOptions);
+                }).fail(function(e) {
+                    infowindow.setContent('<div>' + marker.title + '<font color="red"> Sorry! Could Not Be Loaded</font></p></div><div id="pano"></div>');
+                });
                 var nearStreetViewLocation = data.location.latLng;
                 var heading = google.maps.geometry.spherical.computeHeading(
                     nearStreetViewLocation, marker.position);
-                infowindow.setContent('<div>' + marker.title + '<p> The Current Weather is <span class="weather"></span></p>' +
-                    '</div><div id="pano"></div>');
                 var panoramaOptions = {
                     position: nearStreetViewLocation,
                     pov: {
@@ -184,13 +186,14 @@ function populateInfoWindow(marker, infowindow) {
                         pitch: 30
                     }
                 };
-                var panorama = new google.maps.StreetViewPanorama(
-                    document.getElementById('pano'),
-                    panoramaOptions);
             } else {
-                infowindow.setContent('<div>' + marker.title + '<p> The Current Weather is <span class="weather"></span></p>' +
-                    '</div>' +
-                    '<div>No Street View Found</div>');
+                $.getJSON(weatherAPIXU, function(data) {
+                    var forecast = data.current.temp_c;
+                    infowindow.setContent('<div>' + marker.title + '<p> The Current Weather is ' + forecast + '° C</p></div><div>No Street View Found</div>');
+                }).fail(function(e) {
+                    infowindow.setContent('<div>' + marker.title + '<font color="red"> Sorry! Could Not Be Loaded</font></p></div><div id="pano"></div>');
+                });
+
             }
         };
         // Use streetview service to get the closest streetview image within
@@ -450,7 +453,6 @@ function viewModel() {
     var self = this;
     self.places = ko.observableArray(locations);
     self.address = ko.observable();
-    self.city = ko.observable();
     self.title = ko.observable();
     self.id = ko.observable();
     self.markers = ko.observableArray(markers);
@@ -478,14 +480,6 @@ function viewModel() {
         // Get the place.
         var address = this.address;
         var id = this.id;
-        var city = this.city;
-        var weatherAPIXU = "http://api.apixu.com/v1/current.json?key=453477e8eec14cbc805210143171706&q=" + city;
-        $.getJSON(weatherAPIXU, function(data) {
-            var forecast = data.current.temp_c;
-            $(".weather").html(forecast + '° C');
-        }).fail(function(e) {
-            $(".weather").html('<font color="red">Sorry! Could Not Be Loaded</font>');
-        });
         // Geocode the address/area entered to get the center. Then, center the map on it and zoom in
         geocoder.geocode({
             address: address,
@@ -629,6 +623,3 @@ ko.applyBindings(vm);
 function googleError() {
     alert("Google Maps has failed to load. Please check your internet connection and try again.");
 }
-
-
-// Functions previously used, but no longer needed
